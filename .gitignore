@@ -1,0 +1,33 @@
+# --- deps / package managers ---
+node_modules/
+.pnp
+.pnp.*
+
+# Garder les lockfiles sous contrôle de version (ne PAS ignorer pnpm-lock.yaml)
+# pnpm-lock.yaml doit être COMMIT
+
+# --- Next.js build outputs ---
+.next/
+out/
+build/
+
+# --- logs ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# --- env & outils locaux ---
+.env*
+*.local
+.vercel
+
+# --- OS / éditeurs ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# --- divers ---
+node_repl_history

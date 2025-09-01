@@ -1,0 +1,12 @@
+{
+  "app": { "title": "CureCoach" },
+  "home": {
+    "title": "Programme du jour",
+    "cta": { "start": "Commencer" }
+  },
+  "nav": {
+    "today": "Aujourd'hui",
+    "history": "Historique",
+    "settings": "Réglages"
+  }
+}
