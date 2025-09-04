@@ -1,12 +1,46 @@
 {
-  "app": { "title": "CureCoach" },
-  "home": {
+  "common": {
+    "account": "Compte",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Préférences sauvegardées"
+  },
+  "account": {
+    "title": "Compte",
+    "language": "Langue",
+    "notifications": "Notifications e-mail",
+    "receive_emails": "Recevoir des conseils par e-mail",
+    "wake": "Heure de réveil",
+    "sleep": "Heure de coucher",
+    "save_success": "Préférences sauvegardées"
+  },
+  "today": {
     "title": "Programme du jour",
-    "cta": { "start": "Commencer" }
+    "hydration": "Hydratation",
+    "breathing": "Respiration",
+    "meals": "Alimentation",
+    "loading": "Chargement…",
+    "save_ok": "Sauvegardé pour aujourd’hui ✅"
   },
   "nav": {
-    "today": "Aujourd'hui",
-    "history": "Historique",
-    "settings": "Réglages"
+    "today": "Aujourd’hui",
+    "history": "Programme",
+    "account": "Plus"
+  },
+  "history": {
+    "title": "Historique",
+    "empty": "Ton historique apparaîtra ici.",
+    "back_to_today": "← Retour à aujourd’hui"
+  },
+  "banner": {
+    "incomplete": "Complète ton compte pour une meilleure personnalisation.",
+    "complete": "Compléter"
+  },
+
+  "home": {
+    "title": "Programme du jour",
+    "cta": {
+      "start": "Commencer"
+    }
   }
 }

@@ -1,27 +1,37 @@
 // src/app/[locale]/layout.tsx
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { Toaster } from 'sonner'
+import { NextIntlClientProvider } from 'next-intl'
+import { setRequestLocale } from 'next-intl/server'
 
 export function generateStaticParams() {
-  return [{ locale: "fr" }, { locale: "en" }];
+  return [{ locale: 'fr' }, { locale: 'en' }]
 }
 
-export default async function LocaleLayout(props: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+const dictionaries: Record<string, () => Promise<{ default: any }>> = {
+  fr: () => import('../../../messages/fr.json'),
+  en: () => import('../../../messages/en.json')
+}
+
+export default async function LocaleLayout({
+  children,
+  params
+}: {
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await props.params;
+  const { locale } = await params
+  setRequestLocale(locale)
 
-  // Informe next-intl de la locale courante pour cette requête
-  setRequestLocale(locale);
+  const messagesLoader = dictionaries[locale] ?? dictionaries.fr
+  const messages = (await messagesLoader()).default
 
-  // Récupère les messages (src/i18n/request.ts gère aussi le fallback "fr")
-  const messages = await getMessages();
-
-  // IMPORTANT : on ne rend PAS <html>/<body> ici (seulement dans le layout racine)
   return (
-    <NextIntlClientProvider messages={messages}>
-      <div className="min-h-screen mx-auto max-w-md p-4">{props.children}</div>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      {/* base lisible */}
+      <div className="min-h-screen mx-auto max-w-md p-4 bg-white text-neutral-900 antialiased">
+        {children}
+        <Toaster position="top-center" richColors closeButton />
+      </div>
     </NextIntlClientProvider>
-  );
+  )
 }

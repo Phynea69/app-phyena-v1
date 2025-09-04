@@ -1,12 +1,45 @@
 {
-  "app": { "title": "CureCoach" },
-  "home": {
-    "title": "Today's plan",
-    "cta": { "start": "Start" }
+  "common": {
+    "account": "Account",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Preferences saved"
+  },
+  "account": {
+    "title": "Account",
+    "language": "Language",
+    "notifications": "Email notifications",
+    "receive_emails": "Receive guidance by email",
+    "wake": "Wake time",
+    "sleep": "Bedtime",
+    "save_success": "Preferences saved"
+  },
+  "today": {
+    "title": "Today",
+    "hydration": "Hydration",
+    "breathing": "Breathing",
+    "meals": "Meals",
+    "loading": "Loading…",
+    "save_ok": "Saved for today ✅"
   },
   "nav": {
     "today": "Today",
-    "history": "History",
-    "settings": "Settings"
+    "history": "Plan",
+    "account": "More"
+  },
+  "history": {
+    "title": "History",
+    "empty": "Your past check-ins will appear here.",
+    "back_to_today": "← Back to today"
+  },
+  "banner": {
+    "incomplete": "Complete your account for better personalization.",
+    "complete": "Complete"
+  },
+  "home": {
+    "title": "Today",
+    "cta": {
+      "start": "Start"
+    }
   }
 }

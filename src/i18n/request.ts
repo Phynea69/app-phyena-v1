@@ -1,18 +1,21 @@
 // src/i18n/request.ts
-import {getRequestConfig} from "next-intl/server";
-
-const SUPPORTED = ["fr", "en"] as const;
-type Locale = (typeof SUPPORTED)[number];
+import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => {
-  // Normalise la locale (si undefined, "sw.js", etc. -> "fr")
-  const safe: Locale = SUPPORTED.includes(locale as Locale) ? (locale as Locale) : "fr";
+  // Sécurise la locale reçue
+  const supported = ['fr', 'en'] as const;
+  const resolved = (supported as readonly string[]).includes(locale) ? locale : 'fr';
 
-  const messages = (await import(`../../messages/${safe}.json`)).default;
+  // Mapping statique = plus robuste pour le bundler
+  const dictionaries: Record<string, () => Promise<{default: any}>> = {
+    fr: () => import('../../messages/fr.json'),
+    en: () => import('../../messages/en.json')
+  };
 
-  // Toujours renvoyer la locale retenue + messages
+  const messages = (await dictionaries[resolved]()).default;
+
   return {
-    locale: safe,
+    locale: resolved,
     messages
   };
 });
