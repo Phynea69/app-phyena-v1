@@ -1,0 +1,106 @@
+﻿==== messages ====
+
+Structure du dossier
+Le numéro de série du volume est 000000B0 3835:EB7E
+C:\USERS\GARY\APP-PHYENA-V1\MESSAGES
+    en.json
+    fr.json
+    
+Aucun sous-dossier existant 
+
+
+
+==== src ====
+
+Structure du dossier
+Le numéro de série du volume est 00000072 3835:EB7E
+C:\USERS\GARY\APP-PHYENA-V1\SRC
++---app
+|   |   favicon.ico
+|   |   globals.css
+|   |   layout.tsx
+|   |   page.tsx
+|   |   
+|   +---(app)
+|   |   \---actions
+|   |           advice.ts
+|   |           checkins.ts
+|   |           dayContext.ts
+|   |           program.ts
+|   |           
+|   +---auth
+|   |   \---callback
+|   |           route.ts
+|   |           
+|   +---login
+|   |       page.tsx
+|   |       
+|   \---[locale]
+|       |   layout.tsx
+|       |   page.tsx
+|       |   
+|       +---(auth)
+|       |   \---login
+|       |           page.tsx
+|       |           
+|       +---app
+|       |   |   AppBanner.tsx
+|       |   |   layout.tsx
+|       |   |   TabBar.tsx
+|       |   |   
+|       |   +---account
+|       |   |       AccountForm.tsx
+|       |   |       page.tsx
+|       |   |       
+|       |   +---history
+|       |   |       HistoryList.tsx
+|       |   |       page.tsx
+|       |   |       
+|       |   +---program
+|       |   |   |   page.tsx
+|       |   |   |   
+|       |   |   \---[date]
+|       |   |           page.tsx
+|       |   |           
+|       |   \---today
+|       |           page.tsx
+|       |           TodayChecklist.tsx
+|       |           
+|       +---history
+|       |       page.tsx
+|       |       
+|       +---program
+|       |       page.tsx
+|       |       
+|       \---settings
+|               page.tsx
+|               
++---components
+|   |   AdviceCard.tsx
+|   |   AutoCenter.tsx
+|   |   EveningSheet.tsx
+|   |   MorningSheet.tsx
+|   |   ProgramCard.tsx
+|   |   RestActiveTile.tsx
+|   |   SupplementPrompt.tsx
+|   |   TodayChecklist.tsx
+|   |   
+|   \---ui
+|           button.tsx
+|           checkbox.tsx
+|           input.tsx
+|           theme.ts
+|           
++---i18n
+|       request.ts
+|       
++---lib
+|   \---supabase
+|           client.ts
+|           server.ts
+|           
+\---types
+        json.d.ts
+        
+
+

@@ -1,109 +1,178 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useTranslations } from 'next-intl'
-import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 
-type Props = {
-  date: string // format YYYY-MM-DD (passé par la page)
+type Props = { date: string }
+
+type EntryRow = {
+  id: string
+  hydration: boolean | null
+  breathing: boolean | null
+  meals: boolean | null
 }
 
 export default function TodayChecklist({ date }: Props) {
-  const t = useTranslations('today')
-  const tc = useTranslations('common')
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
 
+  const [entryId, setEntryId] = useState<string | null>(null)
   const [hydration, setHydration] = useState(false)
   const [breathing, setBreathing] = useState(false)
   const [meals, setMeals] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [loading, setLoading] = useState(true)
 
-  // Charger l'état du jour
+  const [userId, setUserId] = useState<string | null>(null)
+
   useEffect(() => {
-    let alive = true
+    let mounted = true
     ;(async () => {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('daily_entries')
-        .select('hydration,breathing,meals')
-        .eq('date', date)
+
+      // 1) Récupérer un user_id “dev” (settings -> user_id) sinon TEST_USER_ID
+      const { data: s } = await supabase
+        .from('settings')
+        .select('user_id')
         .limit(1)
         .maybeSingle()
 
-      if (alive) {
-        if (!error && data) {
+      const fallback = process.env.NEXT_PUBLIC_TEST_USER_ID || null
+      const uid = s?.user_id ?? fallback
+      setUserId(uid)
+
+      // 2) Charger la ligne du jour si elle existe
+      if (uid) {
+        const { data } = await supabase
+          .from('daily_entries')
+          .select('id, hydration, breathing, meals')
+          .eq('user_id', uid)
+          .eq('date', date)
+          .maybeSingle<EntryRow>()
+
+        if (mounted && data) {
+          setEntryId(data.id)
           setHydration(!!data.hydration)
           setBreathing(!!data.breathing)
           setMeals(!!data.meals)
+        } else {
+          if (mounted) {
+            setEntryId(null)
+            setHydration(false)
+            setBreathing(false)
+            setMeals(false)
+          }
         }
-        setLoading(false)
       }
-    })()
 
+      if (mounted) setLoading(false)
+    })()
     return () => {
-      alive = false
+      mounted = false
     }
   }, [date])
 
   async function save() {
-    try {
-      setSaving(true)
+    if (!userId) {
+      alert(
+        "Aucun utilisateur (dev) : assure-toi d'avoir une ligne dans 'settings' ou une variable NEXT_PUBLIC_TEST_USER_ID."
+      )
+      return
+    }
+    setSaving(true)
 
-      // On n'envoie PAS user_id : la trigger DB le pose = auth.uid()
-      const row = { date, hydration, breathing, meals }
+    const payload = {
+      user_id: userId,
+      date,
+      hydration,
+      breathing,
+      meals,
+      updated_at: new Date().toISOString(),
+    }
 
+    if (entryId) {
       const { error } = await supabase
         .from('daily_entries')
-        .upsert(row, { onConflict: 'user_id,date' }) // unique index
+        .update(payload)
+        .eq('id', entryId)
 
-      if (error) throw error
-      toast.success(t('save_ok'))
-    } catch (err: any) {
-      toast.error(err?.message ?? 'Error')
-    } finally {
-      setSaving(false)
+      if (error) {
+        console.error(error)
+        alert("Erreur pendant l'enregistrement.")
+      } else {
+        alert('Enregistré ✅')
+      }
+    } else {
+      const { data, error } = await supabase
+        .from('daily_entries')
+        .insert(payload)
+        .select('id')
+        .maybeSingle()
+
+      if (error) {
+        console.error(error)
+        alert("Erreur pendant l'enregistrement.")
+      } else {
+        setEntryId(data?.id ?? null)
+        alert('Enregistré ✅')
+      }
     }
+
+    setSaving(false)
   }
 
   return (
-    <section className="space-y-4">
-      {/* Hydratation */}
-      <label className="rounded-2xl p-4 border flex items-center justify-between">
-        <span className="text-base">{t('hydration')}</span>
-        <Checkbox
-          checked={hydration}
-          onCheckedChange={(v) => setHydration(Boolean(v))}
-        />
-      </label>
+    <div className="space-y-4">
+      <ChecklistItem
+        label="Hydratation"
+        checked={hydration}
+        onChange={setHydration}
+        disabled={loading || saving}
+      />
+      <ChecklistItem
+        label="Respiration"
+        checked={breathing}
+        onChange={setBreathing}
+        disabled={loading || saving}
+      />
+      <ChecklistItem
+        label="Alimentation"
+        checked={meals}
+        onChange={setMeals}
+        disabled={loading || saving}
+      />
 
-      {/* Respiration */}
-      <label className="rounded-2xl p-4 border flex items-center justify-between">
-        <span className="text-base">{t('breathing')}</span>
-        <Checkbox
-          checked={breathing}
-          onCheckedChange={(v) => setBreathing(Boolean(v))}
-        />
-      </label>
-
-      {/* Alimentation */}
-      <label className="rounded-2xl p-4 border flex items-center justify-between">
-        <span className="text-base">{t('meals')}</span>
-        <Checkbox
-          checked={meals}
-          onCheckedChange={(v) => setMeals(Boolean(v))}
-        />
-      </label>
-
-      <Button
+      <button
+        type="button"
         onClick={save}
-        disabled={saving || loading}
-        className="rounded-2xl w-full"
+        disabled={loading || saving}
+        className="w-full rounded-2xl bg-[#0d1420] px-4 py-3 text-white disabled:opacity-60"
       >
-        {saving ? tc('saving') : tc('save')}
-      </Button>
-    </section>
+        {saving ? 'Enregistrement…' : 'Enregistrer'}
+      </button>
+    </div>
+  )
+}
+
+function ChecklistItem({
+  label,
+  checked,
+  onChange,
+  disabled,
+}: {
+  label: string
+  checked: boolean
+  onChange: (v: boolean) => void
+  disabled?: boolean
+}) {
+  return (
+    <label className="flex items-center justify-between rounded-2xl border px-4 py-4">
+      <span className="text-lg">{label}</span>
+      <input
+        type="checkbox"
+        className="h-6 w-6 accent-black"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        disabled={disabled}
+      />
+    </label>
   )
 }
